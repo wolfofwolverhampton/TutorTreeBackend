@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+
+    <body>
+        <%- include('partials/sidebar', { activePage: 'subscriptions' }) %>
+
+            <main class="content flex-grow-1 p-4">
+                <h1>Subscriptions</h1>
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subscription ID</th>
+                            <th>User ID</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% subscriptions.forEach(subscription=> { %>
+                            <tr>
+                                <td>
+                                    <%= subscription.id %>
+                                </td>
+                                <td>
+                                    <%= subscription.userId || '-' %>
+                                </td>
+                                <td>
+                                    <%= subscription.plan || '-' %>
+                                </td>
+                                <td>
+                                    <%= subscription.status || '-' %>
+                                </td>
+                                <td>
+                                    <%= subscription.startDate || '-' %>
+                                </td>
+                                <td>
+                                    <%= subscription.endDate || '-' %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </main>
+            <%- include("partials/footer") %>
+    </body>
+
+</html>

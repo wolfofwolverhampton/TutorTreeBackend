@@ -1,0 +1,44 @@
+<nav class="sidebar d-flex flex-column p-3">
+    <a href="/admin/dashboard"
+        class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <span class="fs-4">Admin Panel</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link <%= activePage === 'dashboard' ? 'active' : 'text-white' %>">
+                <i class="bi bi-people-fill me-2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/students" class="nav-link <%= activePage === 'students' ? 'active' : 'text-white' %>">
+                <i class="bi bi-people-fill me-2"></i> Students
+            </a>
+        </li>
+        <li>
+            <a href="/admin/teachers" class="nav-link <%= activePage === 'teachers' ? 'active' : 'text-white' %>">
+                <i class="bi bi-person-badge-fill me-2"></i> Teachers
+            </a>
+        </li>
+        <li>
+            <a href="/admin/payments" class="nav-link <%= activePage === 'payments' ? 'active' : 'text-white' %>">
+                <i class="bi bi-cash-stack me-2"></i> Payments
+            </a>
+        </li>
+        <li>
+            <a href="/admin/feedbacks" class="nav-link <%= activePage === 'feedbacks' ? 'active' : 'text-white' %>">
+                <i class="bi bi-chat-left-text-fill me-2"></i> System Feedbacks
+            </a>
+        </li>
+        <li>
+            <a href="/admin/subscriptions"
+                class="nav-link <%= activePage === 'subscriptions' ? 'active' : 'text-white' %>">
+                <i class="bi bi-card-checklist me-2"></i> Subscriptions
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div>
+        <a href="/admin/logout" class="btn btn-danger w-100">Logout</a>
+    </div>
+</nav>

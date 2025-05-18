@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+
+    <body>
+        <%- include('partials/sidebar', { activePage: 'feedbacks' }) %>
+
+            <main class="content flex-grow-1 p-4">
+                <h1>System Feedbacks</h1>
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Feedback ID</th>
+                            <th>User</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% feedbacks.forEach(feedback=> { %>
+                            <tr>
+                                <td>
+                                    <%= feedback.id %>
+                                </td>
+                                <td>
+                                    <%= feedback.user || '-' %>
+                                </td>
+                                <td>
+                                    <%= feedback.message || '-' %>
+                                </td>
+                                <td>
+                                    <%= feedback.date || '-' %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </main>
+            <%- include("partials/footer") %>
+    </body>
+
+</html>

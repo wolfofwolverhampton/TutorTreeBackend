@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+
+    <body>
+        <%- include('partials/sidebar', { activePage: 'teachers' }) %>
+            <main class="content flex-grow-1 p-4">
+                <h1>Teachers</h1>
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Subject</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% teachers.forEach(teacher=> { %>
+                            <tr>
+                                <td>
+                                    <%= teacher.id %>
+                                </td>
+                                <td>
+                                    <%= teacher.name || '-' %>
+                                </td>
+                                <td>
+                                    <%= teacher.email || '-' %>
+                                </td>
+                                <td>
+                                    <%= teacher.phoneNumber || '-' %>
+                                </td>
+                                <td>
+                                    <%= teacher.subject || '-' %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </main>
+            <%- include("partials/footer") %>
+    </body>
+
+</html>

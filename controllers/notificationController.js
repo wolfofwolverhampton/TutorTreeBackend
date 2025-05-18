@@ -5,14 +5,17 @@ const db = admin.database();
 
 exports.sendNotification = async (req, res) => {
   const { senderUid, receiverUid, message } = req.body;
-
   if (!senderUid || !receiverUid || !message) {
+    
     return res.status(400).json({ error: "senderUid, receiverUid and message are required" });
   }
 
   try {
     const snapshot = await db.ref(`user_tokens/${receiverUid}`).once('value');
     const token = snapshot.val();
+    
+    console.log(snapshot.val);
+    
 
     if (!token) {
       return res.status(400).json({ error: 'Receiver does not have a valid FCM token' });

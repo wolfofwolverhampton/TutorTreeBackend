@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+  <body>
+    <%- include('partials/sidebar.ejs', { activePage: 'students' }) %>
+      <main class="content">
+        <h1 class="mb-4">Students</h1>
+
+        <div class="table-responsive shadow-sm rounded">
+          <table class="table table-striped table-hover align-middle">
+            <thead>
+              <tr>
+                <th scope="col">UID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Category</th>
+                <th scope="col">Email</th>
+                <th scope="col">Guardian</th>
+                <th scope="col">Profile Picture</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% students && students.forEach(student=> { %>
+                <tr>
+                  <td>
+                    <%= student.uid %>
+                  </td>
+                  <td>
+                    <%= student.name %>
+                  </td>
+                  <td>
+                    <%= student.phoneNumber %>
+                  </td>
+                  <td>
+                    <%= student.category %>
+                  </td>
+                  <td>
+                    <%= student.gmail %>
+                  </td>
+                  <td>
+                    <%= student.guardianName %> (<%= student.guardianGmail %>)
+                  </td>
+                  <td>
+                    <% if (student.profilePicture) { %>
+                      <img src="<%= student.profilePicture %>" alt="Profile Pic"
+                        style="width:40px; height:40px; border-radius:50%;">
+                      <% } else { %>
+                        N/A
+                        <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </main>
+
+      <%- include("partials/footer") %>
+  </body>
+
+</html>
