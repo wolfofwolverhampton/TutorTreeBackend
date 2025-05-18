@@ -20,13 +20,16 @@ exports.initiatePayment = async (req, res) => {
     return res.status(400).json({ error: "Missing required payment fields" });
   }
 
+  let newAmount = parseInt(amount) * 100;
+  newAmount = newAmount + "";
+
   try {
     const khaltiResponse = await axios.post(
       'https://dev.khalti.com/api/v2/epayment/initiate/',
       {
         return_url: `${BASE_URL}/payment/payment-success`,
         website_url: BASE_URL,
-        amount,
+        amount: newAmount,
         purchase_order_id: subscriptionId,
         purchase_order_name: orderName,
         customer_info: {
