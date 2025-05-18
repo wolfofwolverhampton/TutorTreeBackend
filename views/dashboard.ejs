@@ -1,13 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("partials/header") %>
+<%- include("partials/header", {pageTitle : "Dashboard" }) %>
 
     <body>
         <%- include('partials/sidebar', { activePage: 'dashboard' }) %>
-            <main>
+            <main class="content flex-grow-1 p-4">
+                <h1 class="mb-4">Dashboard Overview</h1>
 
+                <div class="row mb-5">
+                    <!-- Stats cards -->
+                    <div class="col-md-2">
+                        <div class="card text-white bg-primary mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Students</h5>
+                                <p class="card-text fs-3">
+                                    <%= studentCount %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-white bg-success mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Teachers</h5>
+                                <p class="card-text fs-3">
+                                    <%= teacherCount %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-white bg-warning mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Feedbacks</h5>
+                                <p class="card-text fs-3">
+                                    <%= feedbackCount %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-white bg-info mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Subscriptions</h5>
+                                <p class="card-text fs-3">
+                                    <%= subscriptionCount %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-white bg-danger mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Payments</h5>
+                                <p class="card-text fs-3">
+                                    <%= paymentCount %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="mb-3">Payments (Last 6 months)</h2>
+                <canvas id="paymentsChart" height="100"></canvas>
             </main>
             <%- include("partials/footer") %>
+
+                <script>
+                    console.log("chartLabels:", <%- JSON.stringify(chartLabels) %>);
+                    console.log("chartData:", <%- JSON.stringify(chartData) %>);
+
+                    const ctx = document.getElementById('paymentsChart').getContext('2d');
+                    const paymentsChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: <%- JSON.stringify(chartLabels) %>,
+                            datasets: [{
+                                label: 'Total Payments (NRs)',
+                                data: <%- JSON.stringify(chartData) %>,
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 1000 }
+                                }
+                            },
+                            responsive: true,
+                            plugins: {
+                                legend: { display: true },
+                                tooltip: { enabled: true }
+                            }
+                        }
+                    });
+                </script>
     </body>
 
 </html>

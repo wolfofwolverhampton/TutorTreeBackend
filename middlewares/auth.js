@@ -23,7 +23,7 @@ const authMiddleware = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Auth error:", err.message);
-    return res.redirect('/login');
+    return res.redirect('/admin/login');
   }
 };
 

@@ -44,10 +44,7 @@ exports.initiatePayment = async (req, res) => {
           'Content-Type': 'application/json'
         }
       }
-    );
-
-    console.log(`${BASE_URL}/payment/payment-success`);
-    
+    );    
 
     const { pidx, payment_url } = khaltiResponse.data;    
 
@@ -93,7 +90,7 @@ exports.paymentSuccess = async (req, res) => {
       <html>
         <body>
           <script>
-            window.location.href = "javainternal://success?status=${status}&transaction_id=${transactionId}&teacher_uid=${data.teacherUid || ''}&student_uid=${data.studentUid || ''}&amount=${data.amount || 0}&subscription_id=${data.subscriptionId || ''}&order_name=${data.orderName || ''}&mobile=${data.teacherPhone || ''}";
+            window.location.href = "javainternal://success?status=${status}&transaction_id=${transactionId}&teacher_uid=${data.teacherUid || ''}&student_uid=${data.studentUid || ''}&amount=${data.amount || 0}&subscription_id=${data.subscriptionId || ''}&order_name=${data.orderName || ''}&mobile=${data.teacherPhone || ''}&pidx=${pidx}";
           </script>
         </body>
       </html>

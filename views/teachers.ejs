@@ -1,44 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("partials/header") %>
+<%- include("partials/header", { pageTitle: "Teachers" }) %>
 
     <body>
         <%- include('partials/sidebar', { activePage: 'teachers' }) %>
             <main class="content flex-grow-1 p-4">
-                <h1>Teachers</h1>
-                <table class="table table-hover table-bordered align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Subject</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% teachers.forEach(teacher=> { %>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="mb-0">Teachers</h1>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTeacherModal">
+                        <i class="bi bi-plus-circle me-1"></i> Create Teacher
+                    </button>
+                </div>
+
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <td>
-                                    <%= teacher.id %>
-                                </td>
-                                <td>
-                                    <%= teacher.name || '-' %>
-                                </td>
-                                <td>
-                                    <%= teacher.email || '-' %>
-                                </td>
-                                <td>
-                                    <%= teacher.phoneNumber || '-' %>
-                                </td>
-                                <td>
-                                    <%= teacher.subject || '-' %>
-                                </td>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Subject</th>
+                                <th>Profile Picture</th>
+                                <th>Actions</th>
                             </tr>
-                            <% }) %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% teachers.forEach(teacher=> { %>
+                                <tr>
+                                    <td>
+                                        <%= teacher.name || '-' %>
+                                    </td>
+                                    <td>
+                                        <%= teacher.gmail || '-' %>
+                                    </td>
+                                    <td>
+                                        <%= teacher.phoneNumber || '-' %>
+                                    </td>
+                                    <td>
+                                        <%= teacher.category || '-' %>
+                                    </td>
+                                    <td>
+                                        <% if (teacher.profilePicture) { %>
+                                            <img src="<%= teacher.profilePicture %>"
+                                                style="width:40px; height:40px; border-radius:50%;">
+                                            <% } else { %> N/A <% } %>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal"
+                                            data-bs-target="#editTeacherModal-<%= teacher.uid %>">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                            data-bs-target="#deleteTeacherModal-<%= teacher.uid %>">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Edit Modal -->
+                                <div class="modal fade" id="editTeacherModal-<%= teacher.uid %>" tabindex="-1"
+                                    aria-labelledby="editTeacherModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <form action="/admin/teachers/edit/<%= teacher.uid %>" method="POST"
+                                            enctype="multipart/form-data">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Teacher</h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Name</label>
+                                                        <input type="text" class="form-control" name="name"
+                                                            value="<%= teacher.name %>" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Email</label>
+                                                        <input type="email" class="form-control" name="gmail"
+                                                            value="<%= teacher.gmail %>" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Phone</label>
+                                                        <input type="text" class="form-control" name="phoneNumber"
+                                                            value="<%= teacher.phoneNumber %>" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Subject</label>
+                                                        <input type="text" class="form-control" name="category"
+                                                            value="<%= teacher.category %>" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Profile Picture</label>
+                                                        <% if (teacher.profilePicture) { %>
+                                                            <div class="mb-2">
+                                                                <img src="<%= teacher.profilePicture %>"
+                                                                    style="width:60px; height:60px; border-radius:50%;">
+                                                            </div>
+                                                            <% } %>
+                                                                <input type="file" name="profilePicture"
+                                                                    class="form-control" accept="image/*">
+                                                                <small class="form-text text-muted">Leave blank to keep
+                                                                    existing picture</small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteTeacherModal-<%= teacher.uid %>" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" action="/admin/teachers/delete/<%= teacher.uid %>">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-danger">Confirm Delete</h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete teacher <strong>
+                                                        <%= teacher.name %>
+                                                    </strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <%- include("partials/pagination.ejs") %>
+                </div>
+
+                <!-- Create Teacher Modal (outside loop) -->
+                <div class="modal fade" id="createTeacherModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <form action="/admin/teachers/create" method="POST" enctype="multipart/form-data"
+                            class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Create Teacher</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" name="name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="gmail" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" name="phoneNumber" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Subject</label>
+                                    <input type="text" class="form-control" name="category" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" name="confirmPassword" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Profile Picture</label>
+                                    <input type="file" name="profilePicture" class="form-control" accept="image/*">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Create</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </main>
+
             <%- include("partials/footer") %>
     </body>
 

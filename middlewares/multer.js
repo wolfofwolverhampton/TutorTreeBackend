@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: function (req, file, cb) {
-    const uid = req.body.uid || 'unknown';
+    const uid = req.body.uid || req.body.phoneNumber || 'unknown';
     const ext = path.extname(file.originalname);
     cb(null, `${uid}${ext}`);
   }

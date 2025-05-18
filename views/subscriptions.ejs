@@ -1,49 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("partials/header") %>
+<%- include("partials/header", {pageTitle: "Subscriptions" }) %>
 
     <body>
         <%- include('partials/sidebar', { activePage: 'subscriptions' }) %>
 
             <main class="content flex-grow-1 p-4">
-                <h1>Subscriptions</h1>
-                <table class="table table-hover table-bordered align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Subscription ID</th>
-                            <th>User ID</th>
-                            <th>Plan</th>
-                            <th>Status</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% subscriptions.forEach(subscription=> { %>
+                <h1 class="mb-4">Subscriptions</h1>
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <td>
-                                    <%= subscription.id %>
-                                </td>
-                                <td>
-                                    <%= subscription.userId || '-' %>
-                                </td>
-                                <td>
-                                    <%= subscription.plan || '-' %>
-                                </td>
-                                <td>
-                                    <%= subscription.status || '-' %>
-                                </td>
-                                <td>
-                                    <%= subscription.startDate || '-' %>
-                                </td>
-                                <td>
-                                    <%= subscription.endDate || '-' %>
-                                </td>
+                                <th>Subscription ID</th>
+                                <th>Student</th>
+                                <th>Teacher</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Actions</th>
                             </tr>
-                            <% }) %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% subscriptions.forEach(subscription=> { %>
+                                <tr>
+                                    <td>
+                                        <%= subscription.subscriptionId || subscription.id || '-' %>
+                                    </td>
+
+                                    <td>
+                                        <%= subscription.studentName || '-' %><br>
+                                            <small class="text-muted">
+                                                <%= subscription.studentUid || '-' %>
+                                            </small>
+                                    </td>
+
+                                    <td>
+                                        <%= subscription.teacherName || '-' %><br>
+                                            <small class="text-muted">
+                                                <%= subscription.teacherUid || '-' %>
+                                            </small>
+                                    </td>
+
+                                    <td>
+                                        <%= subscription.packageTitle ? subscription.packageTitle : '-' %>
+                                            <% if (subscription.packagePrice) { %>
+                                                <br><small>(Rs. <%= subscription.packagePrice %>)</small>
+                                                <% } %>
+                                    </td>
+
+                                    <td>
+                                        <%= subscription.status || '-' %>
+                                    </td>
+
+                                    <td>
+                                        <%= subscription.subscribedAt ? new
+                                            Date(subscription.subscribedAt).toLocaleDateString('en-IN', { day: '2-digit'
+                                            , month: 'short' , year: 'numeric' }) : '-' %>
+                                    </td>
+
+                                    <td>
+                                        <% if (subscription.subscribedAt && subscription.packageDuration) { const
+                                            endDate=new Date(subscription.subscribedAt);
+                                            endDate.setMonth(endDate.getMonth() + subscription.packageDuration); %>
+                                            <%= endDate.toLocaleDateString('en-IN', { day: '2-digit' , month: 'short' ,
+                                                year: 'numeric' }) %>
+                                                <% } else { %>
+                                                    -
+                                                    <% } %>
+                                    </td>
+
+                                    <td>
+                                        <!-- Edit Button -->
+                                        <button class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal"
+                                            data-bs-target="#editSubscriptionModal-<%= subscription.id %>">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+
+                                        <!-- Delete Button -->
+                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                            data-bs-target="#deleteSubscriptionModal-<%= subscription.id %>">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Edit Modal -->
+                                <div class="modal fade" id="editSubscriptionModal-<%= subscription.id %>" tabindex="-1"
+                                    aria-labelledby="editSubscriptionModalLabel-<%= subscription.id %>"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" action="/admin/subscriptions/edit/<%= subscription.id %>">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Subscription</h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Package Title</label>
+                                                        <input type="text" name="packageTitle" class="form-control"
+                                                            value="<%= subscription.packageTitle || '' %>" required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Package Duration (months)</label>
+                                                        <input type="number" name="packageDuration" class="form-control"
+                                                            value="<%= subscription.packageDuration || '' %>" required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Package Price (Rs)</label>
+                                                        <input type="number" name="packagePrice" class="form-control"
+                                                            value="<%= subscription.packagePrice || '' %>" required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Status</label>
+                                                        <select name="status" class="form-select" required>
+                                                            <option value="PAID" <%=subscription.status==="PAID"
+                                                                ? "selected" : "" %>>PAID</option>
+                                                            <option value="PENDING" <%=subscription.status==="PENDING"
+                                                                ? "selected" : "" %>>PENDING</option>
+                                                            <option value="ACCEPTED" <%=subscription.status==="ACCEPTED"
+                                                                ? "selected" : "" %>>ACCEPTED</option>
+                                                            <option value="CANCELLED"
+                                                                <%=subscription.status==="CANCELLED" ? "selected" : ""
+                                                                %>>CANCELLED</option>
+                                                            <option value="COMPLETED"
+                                                                <%=subscription.status==="COMPLETED" ? "selected" : ""
+                                                                %>>COMPLETED</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteSubscriptionModal-<%= subscription.id %>"
+                                    tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" action="/admin/subscriptions/delete/<%= subscription.id %>">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-danger">Confirm Delete</h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the subscription for
+                                                    <strong>
+                                                        <%= subscription.studentName || 'this student' %>
+                                                    </strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <%- include("partials/pagination.ejs") %>
+                </div>
             </main>
+
             <%- include("partials/footer") %>
     </body>
 
