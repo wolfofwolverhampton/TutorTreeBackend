@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+<body>
+  <div class="container mt-5">
+    <h1>Admin Dashboard</h1>
+    <table class="table table-bordered">
+      <thead>
+        <tr><th>UID</th><th>Name</th><th>Phone</th></tr>
+      </thead>
+      <tbody>
+        <% students && Object.values(students).forEach(student => { %>
+          <tr>
+            <td><%= student.uid %></td>
+            <td><%= student.name %></td>
+            <td><%= student.phoneNumber %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<%- include("partials/footer") %>
+</body>
+</html>

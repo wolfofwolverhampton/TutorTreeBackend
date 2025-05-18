@@ -32,3 +32,12 @@ exports.login = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+exports.renderLoginPage = (req, res) => {
+  res.render('login');
+};
+
+exports.renderDashboard = async (req, res) => {
+  const students = await getStudents();
+  res.render('dashboard', { students });
+};
