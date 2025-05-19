@@ -562,31 +562,39 @@ exports.renderChatOverview = async (req, res) => {
   const chatSnap = await db.ref("findChats").once("value");
   const chatData = chatSnap.exists() ? chatSnap.val() : {};
 
+  const seenRooms = new Set();
   const conversations = [];
 
   for (const roomKey in chatData) {
-    const messagesObj = chatData[roomKey].messages || {};    
+    const messagesObj = chatData[roomKey].messages || {};
     const messages = Object.entries(messagesObj).map(([id, data]) => ({
       id,
       ...data,
-    }));    
+    }));
 
     if (messages.length === 0) continue;
 
-    const latestMessage = messages.sort((a, b) => b.timestamp - a.timestamp)[0];    
+    // Get the latest message
+    const latestMessage = messages.sort((a, b) => b.timestamp - a.timestamp)[0];
+    const senderId = latestMessage.senderId;
+    const receiverId = roomKey.replace(senderId, '');
+
+    // Canonicalize roomId to avoid duplicates
+    const canonicalRoomId = [senderId, receiverId].sort().join('');
+    if (seenRooms.has(canonicalRoomId)) continue;
+    seenRooms.add(canonicalRoomId);
 
     conversations.push({
-      roomId: roomKey,
-      senderId: latestMessage.senderId,
-      receiverId: roomKey.replace(latestMessage.senderId, ''),
-      senderName: await fetchNameByUidFlexible(latestMessage.senderId),
-      receiverName: await fetchNameByUidFlexible(roomKey.replace(latestMessage.senderId, '')),
+      roomId: canonicalRoomId,
+      senderId,
+      receiverId,
+      senderName: await fetchNameByUidFlexible(senderId),
+      receiverName: await fetchNameByUidFlexible(receiverId),
       message: latestMessage.message,
       timestamp: latestMessage.timestamp,
     });
-  }  
+  }
 
-  // Sort by latest message timestamp
   conversations.sort((a, b) => b.timestamp - a.timestamp);
 
   res.render("chats", { conversations });
