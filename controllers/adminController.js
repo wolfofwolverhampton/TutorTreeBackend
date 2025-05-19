@@ -321,6 +321,23 @@ const fetchNameByUid = async (path, uid) => {
   return snap.exists() ? snap.val() : null;
 };
 
+const fetchNameByUidFlexible = async (uid, path = null) => {
+  if (!uid) return null;
+
+  if (path) {
+    return await fetchNameByUid(path, uid);
+  }
+
+  let snap = await db.ref(`students/${uid}/name`).once("value");
+  if (snap.exists()) return snap.val();
+
+  snap = await db.ref(`teachers/${uid}/name`).once("value");
+  if (snap.exists()) return snap.val();
+
+  return null;
+};
+
+
 // Students
 exports.createStudent = async (req, res) => {
   const {
@@ -537,4 +554,52 @@ exports.deleteSubscription = async (req, res) => {
     console.error("Failed to delete subscription:", error);
     res.status(500).send("Error deleting subscription.");
   }
+};
+
+
+// Chats
+exports.renderChatOverview = async (req, res) => {
+  const chatSnap = await db.ref("findChats").once("value");
+  const chatData = chatSnap.exists() ? chatSnap.val() : {};
+
+  const conversations = [];
+
+  for (const roomKey in chatData) {
+    const messagesObj = chatData[roomKey].messages || {};    
+    const messages = Object.entries(messagesObj).map(([id, data]) => ({
+      id,
+      ...data,
+    }));    
+
+    if (messages.length === 0) continue;
+
+    const latestMessage = messages.sort((a, b) => b.timestamp - a.timestamp)[0];    
+
+    conversations.push({
+      roomId: roomKey,
+      senderId: latestMessage.senderId,
+      receiverId: roomKey.replace(latestMessage.senderId, ''),
+      senderName: await fetchNameByUidFlexible(latestMessage.senderId),
+      receiverName: await fetchNameByUidFlexible(roomKey.replace(latestMessage.senderId, '')),
+      message: latestMessage.message,
+      timestamp: latestMessage.timestamp,
+    });
+  }  
+
+  // Sort by latest message timestamp
+  conversations.sort((a, b) => b.timestamp - a.timestamp);
+
+  res.render("chats", { conversations });
+};
+
+exports.renderChatDetail = async (req, res) => {
+  const { roomId } = req.params;
+  const messagesSnap = await db.ref(`findChats/${roomId}/messages`).once("value");
+  const messages = messagesSnap.exists()
+    ? Object.entries(messagesSnap.val()).map(([id, msg]) => ({ id, ...msg }))
+    : [];
+
+  messages.sort((a, b) => a.timestamp - b.timestamp);
+
+  res.render("chat-detail", { roomId, messages });
 };

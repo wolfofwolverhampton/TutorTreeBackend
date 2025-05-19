@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("partials/header", { pageTitle: "Chat Overview" }) %>
+    <body>
+      <%- include('partials/sidebar', { activePage: 'chats' }) %>
+    
+      <main class="content p-4">
+        <h1 class="mb-4">Chats</h1>
+        <table class="table table-hover table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Sender</th>
+              <th>Receiver</th>
+              <th>Last Message</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% conversations.forEach(chat => { %>
+              <tr>
+                <td>
+                    <strong>
+                        <%= chat.senderName || 'Unknown' %>
+                    </strong><br>
+                    <small class="text-muted">
+                        <%= chat.senderId || '-' %>
+                    </small>
+                </td>
+                <td>
+                    <strong>
+                        <%= chat.receiverName || 'Unknown' %>
+                    </strong><br>
+                    <small class="text-muted">
+                        <%= chat.receiverId || '-' %>
+                    </small>
+                </td>
+                <td><%= chat.message %></td>
+                <td><%= new Date(chat.timestamp).toLocaleString('en-IN') %></td>
+                <td>
+                  <a href="/admin/chats/<%= chat.roomId %>" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye-fill"></i>
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </main>
+    
+      <%- include("partials/footer") %>
+    </body>
+
+</html>

@@ -36,4 +36,8 @@ router.post("/feedbacks/delete/:id", adminController.deleteFeedback);
 router.post("/subscriptions/edit/:id", adminController.editSubscription);
 router.post("/subscriptions/delete/:id", adminController.deleteSubscription);
 
+// Chats
+router.get("/chats", adminController.renderChatOverview);
+router.get("/chats/:roomId", adminController.renderChatDetail);
+
 module.exports = router;

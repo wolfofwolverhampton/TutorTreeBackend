@@ -6,14 +6,14 @@ const authMiddleware = async (req, res, next) => {
   const token = req.cookies?.adminToken;
 
   if (!token) {
-    return res.redirect('/login');
+    return res.redirect('/admin/login');
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const adminSnap = await admin.database().ref(`admins/${decoded.id}`).once("value");
     if (!adminSnap.exists()) {
-      return res.redirect('/login');
+      return res.redirect('/admin/login');
     }
 
     req.admin = {
